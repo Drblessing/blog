@@ -24,6 +24,7 @@ const LayoutWrapper = ({ children }) => {
                     width={100}
                     height={50}
                   />
+                  <audio src="/page-change.mp3" controls />
                 </div>
                 {typeof siteMetadata.headerTitle === 'string' ? (
                   <div className="hidden h-6 text-2xl font-semibold sm:block">
