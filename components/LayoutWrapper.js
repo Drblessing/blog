@@ -7,23 +7,32 @@ import Footer from './Footer'
 import MobileNav from './MobileNav'
 import ThemeSwitch from './ThemeSwitch'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const LayoutWrapper = ({ children }) => {
   const [blockNumber, setBlockNumber] = useState(null)
   // Eth block number
   useEffect(() => {
+    const audio = new Audio('/newBlock.mp3')
+    audio.play()
     async function fetchBlockNumber() {
       const response = await fetch('/api/blockNumber')
       const data = await response.json()
       setBlockNumber(data.blockNumber)
+      audio.play()
     }
 
     fetchBlockNumber()
-    const intervalId = setInterval(fetchBlockNumber, 10000)
+    const intervalId = setInterval(fetchBlockNumber, 13000)
 
     return () => clearInterval(intervalId)
   }, [])
+
+  const audioRef = useRef(null)
+  const playAudio = () => {
+    audioRef.current.play()
+  }
+
   return (
     <SectionContainer>
       <div className="flex h-screen flex-col justify-between">
