@@ -8,10 +8,6 @@ const ThemeSwitch = () => {
   // When mounted on client, now we can show the UI
   useEffect(() => setMounted(true), [])
 
-  // Let there be sound
-  // It's from the Bible
-  // My thoughts on the bible:
-  //
   const audioRef = useRef(null)
   const playAudio = () => {
     audioRef.current.play()

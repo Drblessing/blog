@@ -39,9 +39,8 @@ const LayoutWrapper = ({ children }) => {
                     height={50}
                     className="rounded-full"
                   />
-                  <div>Ethereum Block Number: {blockNumber}</div>
-                  <div className="hidden h-6 font-semibold sm:block">
-                    Current Ethereum Block Number: 16,817,445
+                  <div>
+                    Ethereum Block Number: {blockNumber ? blockNumber.toLocaleString() : null}
                   </div>
                 </div>
                 {typeof siteMetadata.headerTitle === 'string' ? (
