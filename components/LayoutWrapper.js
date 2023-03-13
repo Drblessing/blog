@@ -25,6 +25,10 @@ const LayoutWrapper = ({ children }) => {
                     className="rounded-full"
                   />
                 </div>
+                <div className="hidden h-6 text-2xl font-semibold sm:block">
+                  Current Block Number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+                  &nbsp;&nbsp;&nbsp;
+                </div>
                 {typeof siteMetadata.headerTitle === 'string' ? (
                   <div className="hidden h-6 text-2xl font-semibold sm:block">
                     {siteMetadata.headerTitle}
