@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useTheme } from 'next-themes'
 
 const ThemeSwitch = () => {
@@ -8,13 +8,26 @@ const ThemeSwitch = () => {
   // When mounted on client, now we can show the UI
   useEffect(() => setMounted(true), [])
 
+  // Let there be sound
+  // It's from the Bible
+  // My thoughts on the bible:
+  //
+  const audioRef = useRef(null)
+  const playAudio = () => {
+    audioRef.current.play()
+  }
+
   return (
     <button
       aria-label="Toggle Dark Mode"
       type="button"
       className="ml-1 mr-1 h-8 w-8 rounded p-1 sm:ml-4"
-      onClick={() => setTheme(theme === 'dark' || resolvedTheme === 'dark' ? 'light' : 'dark')}
+      onClick={() => {
+        setTheme(theme === 'dark' || resolvedTheme === 'dark' ? 'light' : 'dark')
+        playAudio()
+      }}
     >
+      <audio ref={audioRef} src="/switch-on.mp3" />
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
