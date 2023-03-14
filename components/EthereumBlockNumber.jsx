@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 const EthereumBlockNumber = () => {
   const [blockNumber, setBlockNumber] = useState(null)
-  const testRef = useRef(false)
+  const firstTimeRef = useRef(false)
 
   useEffect(() => {
     const audio = new Audio('/static/newBlock.mp3')
@@ -10,15 +10,15 @@ const EthereumBlockNumber = () => {
       const response = await fetch('api/blockNumber')
       const data = await response.json()
 
-      if (testRef.current) {
+      if (firstTimeRef.current) {
         audio.play()
       }
       setBlockNumber(data.blockNumber)
-      testRef.current = true
+      firstTimeRef.current = true
     }
 
     fetchBlockNumber()
-    const intervalId = setInterval(fetchBlockNumber, 15000)
+    const intervalId = setInterval(fetchBlockNumber, 13_000)
 
     return () => clearInterval(intervalId)
   }, [])
