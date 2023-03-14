@@ -23,7 +23,7 @@ const ThemeSwitch = () => {
         playAudio()
       }}
     >
-      <audio ref={audioRef} src="/switch.mp3" />
+      <audio ref={audioRef} src="/static/switch.mp3" />
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"

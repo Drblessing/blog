@@ -8,26 +8,10 @@ import MobileNav from './MobileNav'
 import ThemeSwitch from './ThemeSwitch'
 import Image from 'next/image'
 import BitcoinBlockNumber from './BitcoinBlockNumber'
+import EthereumBlockNumber from './EthereumBlockNumber'
 import { useState, useEffect, useRef } from 'react'
 
 const LayoutWrapper = ({ children }) => {
-  const [blockNumber, setBlockNumber] = useState(null)
-  // Eth block number
-  useEffect(() => {
-    const audio = new Audio('/newBlock.mp3')
-    async function fetchBlockNumber() {
-      const response = await fetch('/api/blockNumber')
-      const data = await response.json()
-      setBlockNumber(data.blockNumber)
-      audio.play()
-    }
-
-    fetchBlockNumber()
-    const intervalId = setInterval(fetchBlockNumber, 15000)
-
-    return () => clearInterval(intervalId)
-  }, [])
-
   return (
     <SectionContainer>
       <div className="flex h-screen flex-col justify-between">
@@ -43,10 +27,7 @@ const LayoutWrapper = ({ children }) => {
                     height={50}
                     className="rounded-full"
                   />
-                  <div>
-                    Ethereum Block Number: {blockNumber ? blockNumber.toLocaleString() : null}
-                  </div>
-                  <BitcoinBlockNumber />
+                  <EthereumBlockNumber />
                 </div>
                 {typeof siteMetadata.headerTitle === 'string' ? (
                   <div className="hidden h-6 text-2xl font-semibold sm:block">

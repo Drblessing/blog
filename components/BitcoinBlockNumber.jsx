@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 
 const BitcoinBlockNumber = () => {
-  const [blockNumber, setBlockNumber] = useState('Loading...')
+  const fetcher = (...args) => fetch(...args).then((res) => res.json())
 
+  const [blockNumber, setBlockNumber] = useState('Loading...')
+  // useSWR to get ethereum block number from api
+  const { data, error } = useSWR('api/hello', fetcher, { refreshInterval: 1000 })
+
+  console.log(data?.text)
   useEffect(() => {
     // Get block number
     async function fetchBlockNumber() {
@@ -12,7 +18,7 @@ const BitcoinBlockNumber = () => {
     }
   }, [])
 
-  return <div>Bitcoin Block Number: {blockNumber}</div>
+  return <div>Bitcoin Block Number: {data?.text}</div>
 }
 
 export default BitcoinBlockNumber
