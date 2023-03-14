@@ -9,7 +9,7 @@ const ContentSecurityPolicy = `
   style-src 'self' 'unsafe-inline';
   img-src * blob: data:;
   media-src 'self';
-  connect-src * vitals.vercel-insights.com;
+  connect-src * vitals.vercel-insights.com googletagmanager.com;
   font-src 'self';
   frame-src giscus.app
 `
