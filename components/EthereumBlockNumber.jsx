@@ -11,7 +11,10 @@ const EthereumBlockNumber = () => {
       const data = await response.json()
 
       if (firstTimeRef.current) {
-        audio.play()
+        // Play the sound if block number has changed
+        if (data.blockNumber !== blockNumber) {
+          audio.play()
+        }
       }
       setBlockNumber(data.blockNumber)
       firstTimeRef.current = true

@@ -27,7 +27,6 @@ const LayoutWrapper = ({ children }) => {
                     height={50}
                     className="rounded-full"
                   />
-                  <EthereumBlockNumber />
                 </div>
                 {typeof siteMetadata.headerTitle === 'string' ? (
                   <div className="hidden h-6 text-2xl font-semibold sm:block">
@@ -55,6 +54,8 @@ const LayoutWrapper = ({ children }) => {
             <MobileNav />
           </div>
         </header>
+        <EthereumBlockNumber />
+        <BitcoinBlockNumber />
         <main className="mb-auto">{children}</main>
         <Footer />
       </div>

@@ -2,7 +2,7 @@ const siteMetadata = {
   title: 'DBlessing',
   author: 'Daniel Blessing',
   headerTitle: 'DBlessing',
-  description: 'Daniel Blessing Blog about Software Engineering, Blockchains, and other things',
+  description: 'Blockchain Mindset - A blog about blockchains, freedom, and more stuff.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://dblessing.dev',
@@ -15,7 +15,7 @@ const siteMetadata = {
   twitter: 'https://twitter.com/dbless9',
   facebook: 'https://facebook.com',
   youtube: 'https://youtube.com',
-  linkedin: 'https://www.linkedin.com',
+  linkedin: 'https://www.linkedin.com/in/daniel-blessing-122806137/',
   locale: 'en-US',
   analytics: {
     googleAnalyticsId: 'G-D99L30YQVX', // e.g. UA-000000-2 or G-XXXXXXX

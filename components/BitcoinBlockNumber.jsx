@@ -1,24 +1,35 @@
-import { useEffect, useState } from 'react'
-import useSWR from 'swr'
+import { useEffect, useRef, useState } from 'react'
 
 const BitcoinBlockNumber = () => {
-  const fetcher = (...args) => fetch(...args).then((res) => res.json())
+  const [blockNumber, setBlockNumber] = useState(null)
+  const firstTimeRef = useRef(false)
 
-  const [blockNumber, setBlockNumber] = useState('Loading...')
-  // useSWR to get ethereum block number from api
-  const { data, error } = useSWR('api/hello', fetcher, { refreshInterval: 1000 })
-
-  console.log(data?.text)
   useEffect(() => {
-    // Get block number
+    const audio = new Audio('/static/newBitcoinBlock.mp3')
     async function fetchBlockNumber() {
       const response = await fetch('https://blockchain.info/q/getblockcount')
       const data = await response.text()
-      setBlockNumber(data)
+
+      if (firstTimeRef.current) {
+        // Play the sound if block number has changed
+        if (data !== blockNumber || false) {
+          audio.play()
+        }
+      }
+      setBlockNumber(parseInt(data))
+      firstTimeRef.current = true
     }
+
+    fetchBlockNumber()
+
+    const intervalId = setInterval(fetchBlockNumber, 13_000)
+
+    return () => clearInterval(intervalId)
   }, [])
 
-  return <div>Bitcoin Block Number: {data?.text}</div>
+  return (
+    <div>Bitcoin Block Number: {blockNumber ? blockNumber.toLocaleString() : 'Loading ...'} </div>
+  )
 }
 
 export default BitcoinBlockNumber
