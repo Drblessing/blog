@@ -9,6 +9,7 @@ import ThemeSwitch from './ThemeSwitch'
 import Image from 'next/image'
 import BitcoinBlockNumber from './BitcoinBlockNumber'
 import EthereumBlockNumber from './EthereumBlockNumber'
+import MutableAudio from './MutableAudio'
 import { useState, useEffect, useRef } from 'react'
 
 const LayoutWrapper = ({ children }) => {
@@ -54,6 +55,7 @@ const LayoutWrapper = ({ children }) => {
             <MobileNav />
           </div>
         </header>
+        <MutableAudio />
         <EthereumBlockNumber />
         <BitcoinBlockNumber />
         <main className="mb-auto">{children}</main>
