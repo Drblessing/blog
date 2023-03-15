@@ -23,7 +23,9 @@ const EthereumBlockNumber = ({ isMuted }) => {
       setIsMounted(true)
       return
     }
-    audioRef.current.play()
+    setTimeout(() => {
+      audioRef.current.play()
+    }, 10) // add a 10 millisecond delay before playing the audio
   }, [ethereumBlockNumber, isMuted])
 
   if (error)
