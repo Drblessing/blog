@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
+import { getBaseUrl } from '@/lib/utils/getBaseUrl'
 
 const fetcher = async (url) => {
   const res = await fetch(url)
@@ -10,8 +11,8 @@ const fetcher = async (url) => {
 const EthereumBlockNumber = ({ isMuted }) => {
   const audioRef = useRef(null)
   const [isMounted, setIsMounted] = useState(false)
-
-  const { data: ethereumBlockNumber, error } = useSWR('api/getEthBlockNumber', fetcher, {
+  const apiUrl = getBaseUrl() + '/api/getEthBlockNumber'
+  const { data: ethereumBlockNumber, error } = useSWR(apiUrl, fetcher, {
     refreshInterval: 3000,
     dedupingInterval: 3000,
     revalidateOnMount: true,
