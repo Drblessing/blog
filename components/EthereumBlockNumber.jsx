@@ -26,11 +26,11 @@ const EthereumBlockNumber = ({ isMuted }) => {
 
     const audio = new Audio('/static/newEthereumBlock.mp3')
     // Play the sound if block number or isMuted has changed
-    if (!isMuted) {
-      audio.play().catch((err) => {
-        // Ignore the error
-      })
-    }
+    audioRef.current.play()
+
+    // audio.play().catch((err) => {
+    //   // Ignore the error
+    // })
   }, [ethereumBlockNumber, isMuted])
 
   if (error)
@@ -43,7 +43,7 @@ const EthereumBlockNumber = ({ isMuted }) => {
 
   return (
     <div>
-      <audio ref={audioRef} src="/static/newEthereumBlock.mp3" />
+      <audio ref={audioRef} muted={isMuted} src="/static/newEthereumBlock.mp3" />
       Ethereum Block Number:
       {ethereumBlockNumber ? ethereumBlockNumber.toLocaleString() : 'Loading ...'}{' '}
     </div>
