@@ -8,6 +8,9 @@ const fetcher = async (url) => {
 }
 
 const EthereumBlockNumber = ({ isMuted }) => {
+  const audioRef = useRef(null)
+  const [isMounted, setIsMounted] = useState(false)
+
   const { data: ethereumBlockNumber, error } = useSWR('api/getEthBlockNumber', fetcher, {
     refreshInterval: 10000,
     dedupingInterval: 10000,
@@ -16,6 +19,11 @@ const EthereumBlockNumber = ({ isMuted }) => {
   })
 
   useEffect(() => {
+    if (!isMounted) {
+      setIsMounted(true)
+      return
+    }
+
     const audio = new Audio('/static/newEthereumBlock.mp3')
     // Play the sound if block number or isMuted has changed
     if (!isMuted) {
@@ -35,7 +43,8 @@ const EthereumBlockNumber = ({ isMuted }) => {
 
   return (
     <div>
-      Ethereum Block Number:{' '}
+      <audio ref={audioRef} src="/static/newEthereumBlock.mp3" />
+      Ethereum Block Number:
       {ethereumBlockNumber ? ethereumBlockNumber.toLocaleString() : 'Loading ...'}{' '}
     </div>
   )

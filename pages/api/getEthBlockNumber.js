@@ -2,7 +2,7 @@
 import Web3 from 'web3'
 
 export default async function handler(req, res) {
-  // Cache for 13 seconds
+  // Cache for 10 seconds
   res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate')
   const web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETHEREUM_RPC))
   const blockNumber = await web3.eth.getBlockNumber()

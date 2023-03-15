@@ -9,6 +9,8 @@ const fetcher = async (url) => {
 
 const BitcoinBlockNumber = ({ isMuted }) => {
   const bitcoinBlockTime = 1000 * 60 * 5
+  const [isMounted, setIsMounted] = useState(false)
+
   const { data: blockNumber, error } = useSWR('https://blockchain.info/q/getblockcount', fetcher, {
     refreshInterval: bitcoinBlockTime,
     dedupingInterval: bitcoinBlockTime,
@@ -17,6 +19,10 @@ const BitcoinBlockNumber = ({ isMuted }) => {
   })
 
   useEffect(() => {
+    if (!isMounted) {
+      setIsMounted(true)
+      return
+    }
     const audio = new Audio('/static/newBitcoinBlock.mp3')
     // Play the sound if block number or isMuted has changed
     if (!isMuted) {
