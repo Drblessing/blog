@@ -56,8 +56,6 @@ const LayoutWrapper = ({ children }) => {
           </div>
         </header>
         <MutableAudio />
-        <EthereumBlockNumber />
-        <BitcoinBlockNumber />
         <main className="mb-auto">{children}</main>
         <Footer />
       </div>

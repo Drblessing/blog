@@ -1,34 +1,39 @@
 import { useEffect, useRef, useState } from 'react'
+import useSWR from 'swr'
 
-const BitcoinBlockNumber = () => {
-  const [blockNumber, setBlockNumber] = useState(null)
-  const firstTimeRef = useRef(false)
+const fetcher = async (url) => {
+  const res = await fetch(url)
+  const data = await res.text()
+  return parseInt(data)
+}
+
+const BitcoinBlockNumber = ({ isMuted }) => {
+  const bitcoinBlockTime = 1000 * 60 * 10 // 10 minutes
+  const { data: blockNumber, error } = useSWR('https://blockchain.info/q/getblockcount', fetcher, {
+    refreshInterval: bitcoinBlockTime,
+    dedupingInterval: bitcoinBlockTime,
+    revalidateOnMount: true,
+  })
 
   useEffect(() => {
     const audio = new Audio('/static/newBitcoinBlock.mp3')
-    async function fetchBlockNumber() {
-      const response = await fetch('https://blockchain.info/q/getblockcount')
-      const data = await response.text()
-
-      if (firstTimeRef.current) {
-        // Play the sound if block number has changed
-        if (data !== blockNumber || false) {
-          audio.play()
-        }
-      }
-      setBlockNumber(parseInt(data))
-      firstTimeRef.current = true
+    // Play the sound if block number or isMuted has changed
+    if (!isMuted) {
+      audio.play().catch((err) => {
+        // Ignore the error
+      })
     }
+  }, [blockNumber, isMuted])
 
-    fetchBlockNumber()
-
-    const intervalId = setInterval(fetchBlockNumber, 13_000)
-
-    return () => clearInterval(intervalId)
-  }, [])
-
+  if (error)
+    return (
+      <div>
+        Bitcoin Block Number:
+        <span className="text-red-500"> Error</span>
+      </div>
+    )
   return (
-    <div>Bitcoin Block Number: {blockNumber ? blockNumber.toLocaleString() : 'Loading ...'} </div>
+    <div>Bitcoin Block Number: {blockNumber ? blockNumber.toLocaleString() : 'Loading ...'}</div>
   )
 }
 

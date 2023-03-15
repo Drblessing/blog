@@ -1,33 +1,42 @@
 import { useEffect, useRef, useState } from 'react'
+import useSWR from 'swr'
 
-const EthereumBlockNumber = () => {
-  const [blockNumber, setBlockNumber] = useState(null)
-  const firstTimeRef = useRef(false)
+const fetcher = async (url) => {
+  const res = await fetch(url)
+  const data = (await res.json()).blockNumber
+  return data
+}
+
+const EthereumBlockNumber = ({ isMuted }) => {
+  const { data: ethereumBlockNumber, error } = useSWR('api/getEthBlockNumber', fetcher, {
+    refreshInterval: 10000,
+    dedupingInterval: 10000,
+    revalidateOnMount: true,
+  })
 
   useEffect(() => {
-    const audio = new Audio('/static/newBlock.mp3')
-    async function fetchBlockNumber() {
-      const response = await fetch('api/blockNumber')
-      const data = await response.json()
-
-      if (firstTimeRef.current) {
-        // Play the sound if block number has changed
-        if (data.blockNumber !== blockNumber) {
-          audio.play()
-        }
-      }
-      setBlockNumber(data.blockNumber)
-      firstTimeRef.current = true
+    const audio = new Audio('/static/newEthereumBlock.mp3')
+    // Play the sound if block number or isMuted has changed
+    if (!isMuted) {
+      audio.play().catch((err) => {
+        // Ignore the error
+      })
     }
+  }, [ethereumBlockNumber, isMuted])
 
-    fetchBlockNumber()
-    const intervalId = setInterval(fetchBlockNumber, 13_000)
-
-    return () => clearInterval(intervalId)
-  }, [])
+  if (error)
+    return (
+      <div>
+        Ethereum Block Number:
+        <span className="text-red-500"> Error</span>
+      </div>
+    )
 
   return (
-    <div>Ethereum Block Number: {blockNumber ? blockNumber.toLocaleString() : 'Loading ...'} </div>
+    <div>
+      Ethereum Block Number:{' '}
+      {ethereumBlockNumber ? ethereumBlockNumber.toLocaleString() : 'Loading ...'}{' '}
+    </div>
   )
 }
 
