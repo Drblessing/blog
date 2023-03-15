@@ -11,7 +11,7 @@ const BitcoinBlockNumber = ({ isMuted }) => {
   const audioRef = useRef(null)
   const [isMounted, setIsMounted] = useState(false)
 
-  const bitcoinBlockTime = 1000 * 60 * 5
+  const bitcoinBlockTime = 1000 * 60 * 1 // 1 minute refresh interval
   const { data: blockNumber, error } = useSWR('https://blockchain.info/q/getblockcount', fetcher, {
     refreshInterval: bitcoinBlockTime,
     dedupingInterval: bitcoinBlockTime,
