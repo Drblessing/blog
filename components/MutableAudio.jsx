@@ -5,7 +5,7 @@ import EthereumBlockNumber from './EthereumBlockNumber'
 
 const MutableAudio = () => {
   // Keep track of mutable state and pass to children
-  const [isMuted, setIsMuted] = useState(false)
+  const [isMuted, setIsMuted] = useState(true)
 
   const toggle = () => setIsMuted(!isMuted)
   // Return clickable mute icon
