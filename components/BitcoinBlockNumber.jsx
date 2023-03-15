@@ -8,7 +8,7 @@ const fetcher = async (url) => {
 }
 
 const BitcoinBlockNumber = ({ isMuted }) => {
-  const bitcoinBlockTime = 1000 * 60 * 10 // 10 minutes
+  const bitcoinBlockTime = 1000 * 60 * 5
   const { data: blockNumber, error } = useSWR('https://blockchain.info/q/getblockcount', fetcher, {
     refreshInterval: bitcoinBlockTime,
     dedupingInterval: bitcoinBlockTime,
