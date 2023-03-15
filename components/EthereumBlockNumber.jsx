@@ -12,8 +12,8 @@ const EthereumBlockNumber = ({ isMuted }) => {
   const [isMounted, setIsMounted] = useState(false)
 
   const { data: ethereumBlockNumber, error } = useSWR('api/getEthBlockNumber', fetcher, {
-    refreshInterval: 10000,
-    dedupingInterval: 10000,
+    refreshInterval: 3000,
+    dedupingInterval: 3000,
     revalidateOnMount: true,
     refreshWhenHidden: true,
   })
