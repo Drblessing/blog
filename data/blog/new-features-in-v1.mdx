@@ -14,7 +14,7 @@ canonicalUrl: https://tailwind-nextjs-starter-blog.vercel.app/blog/new-features-
 
 A post on the new features introduced in v1.0. New features:
 
-<TOCInline toc={props.toc} exclude="Overview" toHeading={2} />
+<TOCInline toc={props.toc} toHeading={3} />
 
 First load JS decreased from 43kB to 39kB despite all the new features added!^[With the new changes in Nextjs 12, first load JS increase to 45kB.]
 
@@ -24,7 +24,7 @@ See [upgrade guide](#upgrade-guide) below if you are migrating from v0 version o
 
 You can easily modify the theme color by changing the primary attribute in the tailwind config file:
 
-```js:tailwind.config.js
+```js
 theme: {
     colors: {
       primary: colors.teal,
