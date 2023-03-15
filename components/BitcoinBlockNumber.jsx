@@ -13,6 +13,7 @@ const BitcoinBlockNumber = ({ isMuted }) => {
     refreshInterval: bitcoinBlockTime,
     dedupingInterval: bitcoinBlockTime,
     revalidateOnMount: true,
+    refreshWhenHidden: true,
   })
 
   useEffect(() => {

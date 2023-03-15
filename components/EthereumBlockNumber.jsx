@@ -12,6 +12,7 @@ const EthereumBlockNumber = ({ isMuted }) => {
     refreshInterval: 10000,
     dedupingInterval: 10000,
     revalidateOnMount: true,
+    refreshWhenHidden: true,
   })
 
   useEffect(() => {
