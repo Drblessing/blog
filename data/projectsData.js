@@ -1,11 +1,9 @@
 const projectsData = [
   {
-    title: 'A Search Engine',
-    description: `What if you could look up any information in the world? Webpages, images, videos
-    and more. Google has many features to help you find exactly what you're looking
-    for.`,
+    title: 'Hackjack',
+    description: `What if you could play blackjack online with two clicks of a button? Hackjack brings blackjack to the Ethereum blockchain. No more worrying about sketchy online casinos. Hackjack is provably fair and open source.`,
     imgSrc: '/static/images/google.png',
-    href: 'https://www.google.com',
+    href: 'https://hackjack.vercel.app/',
   },
   {
     title: 'The Time Machine',

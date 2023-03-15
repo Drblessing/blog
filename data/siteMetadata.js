@@ -8,7 +8,7 @@ const siteMetadata = {
   siteUrl: 'https://dblessing.dev',
   siteRepo: 'https://github.com/drblessing/blog',
   siteLogo: '/static/images/logo.png',
-  image: '/static/images/avatar.png',
+  image: '/static/images/avatar.jpeg',
   socialBanner: '/static/images/twitter-card.png',
   email: 'drblessing@gmail.com',
   github: 'https://github.com/drblessing',
