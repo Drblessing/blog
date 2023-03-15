@@ -23,14 +23,7 @@ const EthereumBlockNumber = ({ isMuted }) => {
       setIsMounted(true)
       return
     }
-
-    const audio = new Audio('/static/newEthereumBlock.mp3')
-    // Play the sound if block number or isMuted has changed
     audioRef.current.play()
-
-    // audio.play().catch((err) => {
-    //   // Ignore the error
-    // })
   }, [ethereumBlockNumber, isMuted])
 
   if (error)

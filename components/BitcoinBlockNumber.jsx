@@ -8,9 +8,10 @@ const fetcher = async (url) => {
 }
 
 const BitcoinBlockNumber = ({ isMuted }) => {
-  const bitcoinBlockTime = 1000 * 60 * 5
+  const audioRef = useRef(null)
   const [isMounted, setIsMounted] = useState(false)
 
+  const bitcoinBlockTime = 1000 * 60 * 5
   const { data: blockNumber, error } = useSWR('https://blockchain.info/q/getblockcount', fetcher, {
     refreshInterval: bitcoinBlockTime,
     dedupingInterval: bitcoinBlockTime,
@@ -23,13 +24,7 @@ const BitcoinBlockNumber = ({ isMuted }) => {
       setIsMounted(true)
       return
     }
-    const audio = new Audio('/static/newBitcoinBlock.mp3')
-    // Play the sound if block number or isMuted has changed
-    if (!isMuted) {
-      audio.play().catch((err) => {
-        // Ignore the error
-      })
-    }
+    audioRef.current.play()
   }, [blockNumber, isMuted])
 
   if (error)
@@ -40,7 +35,10 @@ const BitcoinBlockNumber = ({ isMuted }) => {
       </div>
     )
   return (
-    <div>Bitcoin Block Number: {blockNumber ? blockNumber.toLocaleString() : 'Loading ...'}</div>
+    <div>
+      <audio ref={audioRef} muted={isMuted} src="/static/newBitcoinBlock.mp3" />
+      Bitcoin Block Number: {blockNumber ? blockNumber.toLocaleString() : 'Loading ...'}
+    </div>
   )
 }
 
