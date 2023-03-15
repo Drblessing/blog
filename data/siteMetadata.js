@@ -5,7 +5,7 @@ const siteMetadata = {
   description: 'Blockchain Mindset - A blog about blockchains, freedom, and more stuff.',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://dblessing.dev',
+  siteUrl: 'https://www.dblessing.dev',
   siteRepo: 'https://github.com/drblessing/blog',
   siteLogo: '/static/images/logo.png',
   image: '/static/images/avatar.jpeg',
