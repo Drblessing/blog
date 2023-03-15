@@ -25,7 +25,9 @@ const BitcoinBlockNumber = ({ isMuted }) => {
       return
     }
     setTimeout(() => {
-      audioRef.current.play()
+      audioRef.current.play().catch((err) => {
+        // Do nothing
+      })
     }, 10) // add a 10 millisecond delay before playing the audio
   }, [blockNumber, isMuted])
 

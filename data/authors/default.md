@@ -1,5 +1,5 @@
 ---
-name: Daneil Blessing
+name: Daniel Blessing
 avatar: /static/images/avatar.jpeg
 occupation: Blockchain Engineer
 company:
@@ -9,7 +9,7 @@ linkedin: https://www.linkedin.com/in/daniel-blessing-122806137/
 github: https://github.com/drblessing
 ---
 
-Hi! I'm Daniel Blessing.
+Hi! I'm Daniel Blessing. Nice to meet you.
 
 I'm a blockhain engineer and a data scientist. I graduated the University of San Francisco with a master's degree in data science, and graduated Johns Hopkins University with a bachelor's degree in Applied Mathematics and Chemical Engineering. I'm currently working as a blockchain engineer at a startup in San Francisco.
 

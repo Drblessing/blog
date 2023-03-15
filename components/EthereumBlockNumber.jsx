@@ -25,7 +25,9 @@ const EthereumBlockNumber = ({ isMuted }) => {
       return
     }
     setTimeout(() => {
-      audioRef.current.play()
+      audioRef.current.play().catch((err) => {
+        // Do nothing
+      })
     }, 10) // add a 10 millisecond delay before playing the audio
   }, [ethereumBlockNumber, isMuted])
 
@@ -40,7 +42,7 @@ const EthereumBlockNumber = ({ isMuted }) => {
   return (
     <div>
       <audio ref={audioRef} muted={isMuted} src="/static/newEthereumBlock.mp3" />
-      Ethereum Block Number:
+      Ethereum Block Number:{' '}
       {ethereumBlockNumber ? ethereumBlockNumber.toLocaleString() : 'Loading ...'}{' '}
     </div>
   )
