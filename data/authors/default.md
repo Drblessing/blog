@@ -11,7 +11,7 @@ github: https://github.com/drblessing
 
 Hi! I'm Daniel Blessing. Nice to meet you.
 
-I'm a blockchain engineer and a data scientist. I graduated from the University of San Francisco with a master's degree in data science, and graduated from Johns Hopkins University with a bachelor's degree in Applied Mathematics and Chemical Engineering. I'm currently working as a blockchain engineer at a startup in San Francisco.
+I'm a blockchain engineer and a data scientist. I graduated from the University of San Francisco with a master's degree in data science, and from Johns Hopkins University with a bachelor's degree in Applied Mathematics and Chemical Engineering. I'm currently working as a blockchain engineer at a startup in San Francisco.
 
 I'm currently working on Hackjack, a decentralized blackjack game built on the Ethereum blockchain.
 
