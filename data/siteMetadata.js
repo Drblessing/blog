@@ -1,7 +1,7 @@
 const siteMetadata = {
-  title: 'DBlessing',
+  title: 'D Blessing',
   author: 'Daniel Blessing',
-  headerTitle: 'DBlessing',
+  headerTitle: 'D Blessing',
   description: 'Blockchain Mindset - A blog about blockchains, freedom, and more stuff.',
   language: 'en-us',
   theme: 'system', // system, dark or light
@@ -15,6 +15,8 @@ const siteMetadata = {
   twitter: 'https://twitter.com/dbless9',
   facebook: 'https://facebook.com',
   youtube: 'https://youtube.com',
+  substack: 'https://blockchainmindset.substack.com',
+  mirror: 'dblessdev.xyz',
   linkedin: 'https://www.linkedin.com/in/daniel-blessing-122806137/',
   locale: 'en-US',
   analytics: {
