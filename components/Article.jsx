@@ -2,26 +2,27 @@ import React from 'react'
 import Link from '@/components/Link'
 import Tag from '@/components/Tag'
 import formatDate from '@/lib/utils/formatDate'
+import Image from 'next/image'
 
 export default function Article({ slug, date, title, summary, tags, images }) {
   const src = Array.isArray(images) ? images[0] : images
+  console.log(src)
   return (
     <li className="py-12">
       <article>
-        <div className="space-y-2 xl:grid xl:grid-cols-4 xl:items-start xl:gap-5 xl:space-y-0">
+        <div className="space-y-2 xl:grid xl:grid-cols-4 xl:items-start xl:gap-8 xl:space-y-0">
           <dl className="xl:col-span-1">
             {src ? (
               <dt className="mb-4">
-                <Link
-                  href={`/blog/${slug}`}
-                  className="block overflow-hidden rounded shadow-lg"
-                  title={title}
-                >
-                  <img
+                <Link href={`/blog/${slug}`} title={title}>
+                  <Image
                     alt={title}
-                    className="h-full w-full transform rounded-lg object-cover transition-transform duration-200 hover:scale-110"
+                    className="mx-2 rounded-lg"
+                    width={225}
+                    height={150}
                     src={src}
                   />
+                  <span className="sr-only">{title}</span>
                 </Link>
               </dt>
             ) : null}
