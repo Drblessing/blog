@@ -8,9 +8,9 @@ const siteMetadata = {
   theme: 'system', // system, dark or light
   siteUrl: 'https://www.dblessing.dev',
   siteRepo: 'https://github.com/drblessing/blog',
-  siteLogo: '/static/images/logo.png',
+  siteLogo: '/static/favicons/favicon.png',
   image: '/static/images/avatar.jpeg',
-  socialBanner: '/static/images/twitter-card.png',
+  socialBanner: '/static/favicons/favicon.png',
   email: 'drblessing@gmail.com',
   github: 'https://github.com/drblessing',
   twitter: 'https://twitter.com/dbless9',
