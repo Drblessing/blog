@@ -13,8 +13,6 @@ import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 export default function PostLayout({ frontMatter, authorDetails, next, prev, children }) {
   const { date, title, images, tags } = frontMatter
 
-  console.log(tags, images)
-
   return (
     <SectionContainer>
       <BlogSEO url={`${siteMetadata.siteUrl}/blog/${frontMatter.slug}`} {...frontMatter} />
@@ -27,6 +25,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                 <div>
                   <dt className="sr-only">Published on</dt>
                   <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
+                    <br></br>
                     <time dateTime={date}>{formatDate(date)}</time>
                   </dd>
                 </div>

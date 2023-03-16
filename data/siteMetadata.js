@@ -2,7 +2,8 @@ const siteMetadata = {
   title: 'D Blessing',
   author: 'Daniel Blessing',
   headerTitle: 'D Blessing',
-  description: 'Blockchain Mindset - A blog about blockchains, freedom, and more stuff.',
+  description:
+    'The personal website of Daniel Blessing. Blockchain Mindset - A blog about blockchains, freedom, and more stuff.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://www.dblessing.dev',

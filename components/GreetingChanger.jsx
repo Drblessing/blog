@@ -1,38 +1,49 @@
-import { useState, useEffect } from 'react'
-import TypeAnimation from 'react-type-animation'
+import { TypeAnimation } from 'react-type-animation'
 import greetings from '@/lib/greetings'
 
-const GreetingChanger = () => {
-  const [index, setIndex] = useState(0)
+/**
+ * Randomly shuffle an array
+ * https://stackoverflow.com/a/2450976/1293256
+ * @param  {Array} array The array to shuffle
+ * @return {Array}       The shuffled array
+ */
+function shuffle(array) {
+  let currentIndex = array.length
+  let temporaryValue, randomIndex
 
-  const changeGreeting = () => {
-    const newIndex = Math.floor(Math.random() * greetings.length)
-    setIndex(newIndex)
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex)
+    currentIndex -= 1
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex]
+    array[currentIndex] = array[randomIndex]
+    array[randomIndex] = temporaryValue
   }
 
-  useEffect(() => {
-    const interval = setInterval(changeGreeting, 4000)
-    return () => {
-      clearInterval(interval)
-    }
-  }, [])
+  return array
+}
+
+const GreetingChanger = () => {
+  // Shuffle greetings but start with hello
+  const hello = greetings[0]
+  const shuffledGreetings = shuffle(greetings.slice(1))
+  // Add hello to the beginning of the shuffled greetings
+  shuffledGreetings.unshift(hello)
+  // Add 4s delay between each element in the greetings array
+  // We need to make greetings = [greetings[0],4000,grettings[1],4000,...]
+  const newGreetings = []
+  shuffledGreetings.forEach((greeting) => {
+    newGreetings.push(greeting)
+    newGreetings.push(3000)
+  })
 
   return (
     <TypeAnimation
-      // Same String at the start will only be typed once, initially
-      sequence={[
-        'We produce food for Mice',
-        1000,
-        'We produce food for Hamsters',
-        1000,
-        'We produce food for Guinea Pigs',
-        1000,
-        'We produce food for Chinchillas',
-        1000,
-      ]}
-      speed={50} // Custom Speed from 1-99 - Default Speed: 40
-      style={{ fontSize: '2em' }}
-      wrapper="span" // Animation will be rendered as a <span>
+      sequence={newGreetings}
+      speed={1} // Custom Speed from 1-99 - Default Speed: 40
       repeat={Infinity} // Repeat this Animation Sequence infinitely
     />
   )

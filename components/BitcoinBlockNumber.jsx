@@ -41,7 +41,7 @@ const BitcoinBlockNumber = ({ isMuted }) => {
   return (
     <div>
       <audio ref={audioRef} muted={isMuted} src="/static/newBitcoinBlock.mp3" />
-      Bitcoin Block Number: {blockNumber ? blockNumber.toLocaleString() : 'Loading ...'}
+      Bitcoin Block Height: {blockNumber ? blockNumber.toLocaleString() : 'Loading ...'}
     </div>
   )
 }

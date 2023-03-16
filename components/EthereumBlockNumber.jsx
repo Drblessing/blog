@@ -42,7 +42,7 @@ const EthereumBlockNumber = ({ isMuted }) => {
   return (
     <div>
       <audio ref={audioRef} muted={isMuted} src="/static/newEthereumBlock.mp3" />
-      Ethereum Block Number:{' '}
+      Ethereum Block Height:{' '}
       {ethereumBlockNumber ? ethereumBlockNumber.toLocaleString() : 'Loading ...'}{' '}
     </div>
   )

@@ -20,13 +20,16 @@ export default function Home({ posts }) {
       <PageSEO title={siteMetadata.title} description={siteMetadata.description} />
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
         <div className="space-y-2 pt-6 pb-8 md:space-y-5">
-          <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-lime-500 dark:text-lime-500 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
-            <GreetingChanger />
+          <h1 className="text-4xl font-extrabold leading-9 tracking-tight text-lime-500 dark:text-lime-500 sm:leading-10 md:leading-14">
+            <div className="flex flex-wrap">
+              <GreetingChanger /> 😎
+            </div>
           </h1>
           <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
-            {siteMetadata.description}
-            <br></br>
-            Written by my friends and I, Daniel Blessing.
+            Welcome to my corner of the internet, where I share my thoughts, experiences, and
+            questionable humor with the world. You can read articles from my blog, Blockchain
+            Mindset, or explore the rest of it. <br />
+            Enjoy!
           </p>
         </div>
 
