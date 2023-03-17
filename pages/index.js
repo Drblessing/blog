@@ -27,15 +27,28 @@ export default function Home({ posts }) {
             </div>
           </h1>
           <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
-            Welcome to my corner of the internet, where I share my thoughts, experiences, and
-            questionable humor with the world. You can read articles from my blog, Blockchain
-            Mindset, or explore the rest of it. <br />
+            Welcome to my corner of the internet! Here, I share my thoughts, experiences, and
+            questionable humor with the world. You can dive into the latest articles on my blog,
+            Blockchain Mindset, or explore. <br />
             Enjoy!
           </p>
+          <hr
+            className="border border-gray-200 dark:border-gray-700"
+            style={{ borderTopWidth: '0.1px' }}
+          />
+          <h1 className="text-2xl text-gray-400">Latest Adventure</h1>
+          <img
+            src="https://raw.githubusercontent.com/Drblessing/utils/master/Images/tahoe_3_1_2023.jpeg"
+            alt="Tahoe"
+            className="rounded-lg shadow-lg"
+          />
+          <h1 className="text-lg leading-7 text-gray-500 dark:text-gray-400">
+            Skiing at Lake Tahoe, Winter 2023
+          </h1>
         </div>
         <h1 className="text-2xl text-gray-400">
           <br />
-          Lateset
+          Lateset Articles
         </h1>
         <br />
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">

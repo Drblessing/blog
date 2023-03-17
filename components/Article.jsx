@@ -6,7 +6,6 @@ import Image from 'next/image'
 
 export default function Article({ slug, date, title, summary, tags, images }) {
   const src = Array.isArray(images) ? images[0] : images
-  console.log(src)
   return (
     <li className="py-12">
       <article>
@@ -15,13 +14,7 @@ export default function Article({ slug, date, title, summary, tags, images }) {
             {src ? (
               <dt className="mb-4">
                 <Link href={`/blog/${slug}`} title={title}>
-                  <Image
-                    alt={title}
-                    className="mx-2 rounded-lg"
-                    width={225}
-                    height={150}
-                    src={src}
-                  />
+                  <img alt={title} className="mx-2 rounded-lg" width={200} height={200} src={src} />
                   <span className="sr-only">{title}</span>
                 </Link>
               </dt>
