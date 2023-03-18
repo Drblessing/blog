@@ -18,7 +18,6 @@ const EthereumBlockNumber = ({ isMuted }) => {
     revalidateOnMount: true,
     refreshWhenHidden: true,
   })
-
   useEffect(() => {
     if (!isMounted) {
       setIsMounted(true)

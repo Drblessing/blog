@@ -10,7 +10,7 @@ import BitcoinBlockNumber from './BitcoinBlockNumber'
 import EthereumBlockNumber from './EthereumBlockNumber'
 import MutableAudio from './MutableAudio'
 import { useState, useEffect, useRef } from 'react'
-import MenuBars from './MenuBars'
+// import MenuDropdown from './MenuDropdown'
 
 const LayoutWrapper = ({ children }) => {
   return (
