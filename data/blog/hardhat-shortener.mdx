@@ -1,0 +1,61 @@
+---
+title: '👷‍♂️ Shortening Hardhat Commands'
+date: '2023-03-21'
+tags: ['hardhat', 'solidity', 'development']
+draft: false
+summary: 'Learn how to shorten your Hardhat commands using a simple alias and bash script.'
+images: ['']
+authors: ['default']
+layout: PostSimple
+canonicalUrl: https://www.dblessing.dev/blog/hardhat-shortener
+---
+
+Are you tired of typing out `npx hardhat run --network ... scripts/....` every time you want to run a Hardhat command? I was too. That's why I wrote a simple bash script to shorten the command to `hh <optional network> <file>` and added an alias to my `.bashrc` (`.zshrc` for Mac users) file to make it even shorter.
+
+Hardhat is a popular Ethereum development environment designed to streamline the process of building, testing, and deploying smart contracts. It provides developers with a range of tools, such as task automation, debugging, and network management, to create a more efficient workflow. However, repeatedly typing out long Hardhat commands can be cumbersome and time-consuming. In this post, I'll show you how to shorten your Hardhat commands using a simple alias and bash script, making your development experience even more seamless and enjoyable.
+
+## Step 1: Create a bash script
+
+First, create a new file called `hh.sh` in your home directory. You can use any text editor or the terminal to create the file. Then, add the following content to the file:
+
+```bash:hh.sh
+#!/bin/bash
+
+if [[ $# -eq 2 ]]; then
+  npx hardhat run --network $1 $2
+elif [[ $# -eq 1 ]]; then
+  npx hardhat run $1
+else
+  echo "Usage: hh.sh [network] [script]"
+fi
+```
+
+Make the script executable with:
+
+```terminal
+chmod +x ~/hh.sh
+```
+
+## Step 2: Add an alias
+
+Next, add an alias to your `.bashrc` file. Open the file with your favorite text editor and add the following line:
+
+```bash:.bashrc
+alias hh='bash ~/hh.sh'
+```
+
+## Step 3: Test it out
+
+Now that you've created the alias, test it by running the following command:
+
+```terminal
+hh scripts/deploy.js
+```
+
+You can also add an optional network argument to the command:
+
+```terminal
+hh sepolia scripts/deploy.js
+```
+
+Congratulations, you've successfully created an alias to make running Hardhat commands easier! You can customize the alias to fit your workflow by modifying the `hh.sh` script.
