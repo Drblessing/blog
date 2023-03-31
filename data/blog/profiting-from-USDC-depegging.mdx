@@ -10,6 +10,564 @@ layout: PostSimple
 canonicalUrl: https://dblessing.dev/blog/madey-coffee-guide
 ---
 
-How do you make $40,000 in a single Ethereum transaction?
+How do you make \$40,000 in a single Ethereum transaction?
 
 Like [this](https://etherscan.io/tx/0x00329028f21aecfbd3f69e80a00284b103723a755299210f94d6a71cac411d51):
+
+<img
+  src="https://raw.githubusercontent.com/Drblessing/blog/master/data/blogImages/depeg1.png"
+  width="70%"
+/>
+
+Admittedly, it was during the depegging, and markets were signaling some \$USDC depegging risk.
+What if you wanted to hedge against \$USDC going to 0?
+
+With Defi, you can do it like [this](https://twitter.com/spotonchain/status/1634419625130852353?s=20):
+
+- czsamsunsb.eth borrows \$27.3m \$USDT from AAVE with \$ETH collateral.
+- Swap \$27.3m \$USDT → \$28.6m \$USDC with a DEX (A \$1m profit if \$USDC repegs 💰).
+- Borrow \$113m \$USDC from AAVE.
+- Swap \$113m \$USDC to \$DAI with a DEX.
+
+Now, if \$USDC goes to 0, they make \$113m - \$28.6m = \$84.4m.
+
+If \$USDC repegs, they make \$1m - AAVE interest fees.
+
+Let’s dive in to the onchain analysis 🌊 !
+
+## TLDR
+
+A lot of people buying the dip onchain made money, which were easy to find. According to my queries, there were over [167](https://docs.google.com/spreadsheets/d/1_8pUMW_If4utN0Nzo-Uk-mFmT2fRccKSRgJc8U4D1rw/edit?usp=sharing) transactions where a single EOA wallet made over \$100k in stablecoins on a single transaction. Hunting for more advanced DeFi strategies where the user potentially hedged was harder, due to multiple reasons. I’ve added some queries and my thoughts.
+
+As I dip my toes back into onchain analysis, I’m excited to conitue exploring and improving. If you have any suggestions or projects you want to talk to me about please reach out to me on twitter, I’m willing to do work on projects for free to gain more experience. Due to time constraints for this article, the queries are verbose and there may be mistakes. I’ll be updating the queries and adding more analysis in the future.
+
+## Introduction
+
+The recent depegging of the stablecoin \$USDC has sent ripples through the cryptocurrency market, sparking curiosity and questions about the parties involved and the financial implications of the event. In this article, I will conduct an in-depth on-chain analysis using Google BigQuery to identify the addresses that profited from the depegging of \$USDC. By examining these addresses and their transactions, I aim to provide valuable insights into the strategies employed and the potential impact of such events on the market.
+
+I broke my analysis into two parts: Potential single-transaction profits, and defi strategies involving borrowing \$USDT from AAVE, an onchain lender.
+
+## Google Big Query
+
+Google big query, along with others, is a phenomenal tool for onchain analysis.
+
+Why I like Google Big Query for onchain analysis:
+
+- **Cheap:** This whole project cost me \$0.03. Processing over 10GB in queries.
+- **Big:** Their dataset contains every ethereum transaction, 1.26TB worth according to them. You can run queries that process big data, quickly. The scope of queries you can do is pretty mindblowing. For example, you can get every wallet that’s ever bought or receieved 3 out of 5 ERC20 tokens.
+- **Flexible:** Premade tables `token_transfers` , `transactions`, `contracts` , etc. You can save preivous queries as new tables or views.
+
+Here is a list of the `crypto_ethereum` tables:
+
+<img
+  src="https://raw.githubusercontent.com/Drblessing/blog/master/data/blogImages/depeg2.png"
+  width="40%"
+/>
+
+The main tables I use are token_transfer and transactions.
+
+The token_transfers dataset:
+
+<img
+  src="https://raw.githubusercontent.com/Drblessing/blog/master/data/blogImages/depeg3.png"
+  width="100%"
+/>
+
+It contains all ERC20 transfers on Ethereum. Useful for finding addresses that have received or sent any ERC20 coins. One downside is the original transaction data is not recorded, so if you need to find the EOA that initiated the transaction, you have to join it with the transactions table.
+
+The transactions table:
+
+<img
+  src="https://raw.githubusercontent.com/Drblessing/blog/master/data/blogImages/depeg4.png"
+  width="100%"
+/>
+
+The grand daddy of all datasets. Utilize Ethereum like an SQL table. Contains everything of relevance, and its easily worked with.
+
+Some notes on BigQuery:
+
+- Timestamps are in UTC.
+- Token name lists are polluted with fake tokens.
+- All hexadecimal is lowercase.
+
+## Single-transaction Profit Queries
+
+A.k.a. BTFD.
+
+Final Query:
+
+```sql
+DECLARE depegging_start TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 02:00:00');
+DECLARE depegging_end TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 20:00:00');
+DECLARE usdc STRING DEFAULT '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
+DECLARE usdt STRING DEFAULT '0xdac17f958d2ee523a2206206994597c13d831ec7';
+DECLARE dai STRING DEFAULT '0x6b175474e89094c44da98b954eedeac495271d0f';
+DECLARE usdc_decimals NUMERIC DEFAULT 6;
+DECLARE usdt_decimals NUMERIC DEFAULT 6;
+DECLARE dai_decimals NUMERIC DEFAULT 18;
+
+
+WITH transfers AS (SELECT * FROM (SELECT *,
+  CASE
+      WHEN token_address = usdc THEN CAST(value AS NUMERIC) / POWER(10, usdc_decimals)
+      WHEN token_address = usdt THEN CAST(value AS NUMERIC) / POWER(10, usdt_decimals)
+      WHEN token_address = dai THEN CAST(value AS NUMERIC) / POWER(10, dai_decimals)
+      ELSE CAST(value AS NUMERIC) -- Default case
+  END AS transfer_amount
+FROM `bigquery-public-data.crypto_ethereum.token_transfers` tt
+WHERE depegging_start < tt.block_timestamp AND tt.block_timestamp < depegging_end
+AND token_address IN (usdc,usdt,dai))
+WHERE transfer_amount > 100000
+ORDER BY transaction_hash),
+original_transactions AS (SELECT *
+FROM `bigquery-public-data.crypto_ethereum.transactions` txns
+WHERE depegging_start < txns.block_timestamp AND txns.block_timestamp < depegging_end
+)
+
+
+SELECT *,(scout.stablecoins_out - scin.stablecoins_in) as potential_profit FROM (SELECT t.transaction_hash,t.from_address,SUM(t.transfer_amount) as stablecoins_in
+FROM transfers t
+JOIN (
+  SELECT transaction_hash
+  FROM transfers
+  GROUP BY transaction_hash
+  HAVING COUNT(*) > 1
+) dupes
+ON t.transaction_hash = dupes.transaction_hash
+JOIN `usdc_depegging.eoas` e
+ON e.from_address = t.from_address
+GROUP BY t.from_address,t.transaction_hash
+ORDER BY stablecoins_in DESC) scin
+JOIN (SELECT t.transaction_hash,t.to_address,SUM(t.transfer_amount) as stablecoins_out
+FROM transfers t
+JOIN (
+  SELECT transaction_hash
+  FROM transfers
+  GROUP BY transaction_hash
+  HAVING COUNT(*) > 1
+) dupes
+ON t.transaction_hash = dupes.transaction_hash
+JOIN `usdc_depegging.eoas` e
+ON e.from_address = t.to_address
+GROUP BY t.to_address,t.transaction_hash
+ORDER BY stablecoins_out DESC) scout
+ON scin.from_address = scout.to_address AND scin.transaction_hash = scout.transaction_hash
+WHERE scout.stablecoins_out - scin.stablecoins_in > 100000
+ORDER BY (scout.stablecoins_out - scin.stablecoins_in) DESC
+```
+
+Results:
+
+[Public Google CSV file of results](https://docs.google.com/spreadsheets/d/1_8pUMW_If4utN0Nzo-Uk-mFmT2fRccKSRgJc8U4D1rw/edit?usp=sharing)
+
+First, we have to find when the depegging took place. From [coingecko](https://www.coingecko.com/en/coins/usd-coin):
+
+<img
+  src="https://raw.githubusercontent.com/Drblessing/blog/master/data/blogImages/depeg5.png"
+  width="70%"
+/>
+
+Roughly:
+
+```sql
+DECLARE depegging_start TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 02:00:00');
+DECLARE depegging_end TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 20:00:00');
+```
+
+Now, lets get all token transfers during the depegging involving USDT, USDC, and DAI that involved over \$100,000 of value:
+
+```sql
+DECLARE depegging_start TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 02:00:00');
+DECLARE depegging_end TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 20:00:00');
+DECLARE usdc STRING DEFAULT '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
+DECLARE usdt STRING DEFAULT '0xdac17f958d2ee523a2206206994597c13d831ec7';
+DECLARE dai STRING DEFAULT '0x6b175474e89094c44da98b954eedeac495271d0f';
+DECLARE usdc_decimals NUMERIC DEFAULT 6;
+DECLARE usdt_decimals NUMERIC DEFAULT 6;
+DECLARE dai_decimals NUMERIC DEFAULT 18;
+
+
+WITH transfers AS (SELECT * FROM (SELECT *,
+  CASE
+      WHEN token_address = usdc THEN CAST(value AS NUMERIC) / POWER(10, usdc_decimals)
+      WHEN token_address = usdt THEN CAST(value AS NUMERIC) / POWER(10, usdt_decimals)
+      WHEN token_address = dai THEN CAST(value AS NUMERIC) / POWER(10, dai_decimals)
+      ELSE CAST(value AS NUMERIC) -- Default case
+  END AS transfer_amount
+FROM `bigquery-public-data.crypto_ethereum.token_transfers` tt
+WHERE depegging_start < tt.block_timestamp AND tt.block_timestamp < depegging_end
+AND token_address IN (usdc,usdt,dai))
+WHERE transfer_amount > 100000
+ORDER BY transaction_hash)
+```
+
+Note that this is a CTE, you’ll have to modify it to run it. Here, we get the transfer amount using the token decimals, and the token address to get the transactions only involving stablecoins. We also use a subquery to filter on transfer_amount.
+
+Getting the transfer amount:
+
+```sql
+  CASE
+      WHEN token_address = usdc THEN CAST(value AS NUMERIC) / POWER(10, usdc_decimals)
+      WHEN token_address = usdt THEN CAST(value AS NUMERIC) / POWER(10, usdt_decimals)
+      WHEN token_address = dai THEN CAST(value AS NUMERIC) / POWER(10, dai_decimals)
+      ELSE CAST(value AS NUMERIC) -- Default case
+  END AS transfer_amount
+```
+
+Transactions only during depegging involving stablecoins over a certain amount:
+
+```sql
+FROM `bigquery-public-data.crypto_ethereum.token_transfers` tt
+WHERE depegging_start < tt.block_timestamp AND tt.block_timestamp < depegging_end
+AND token_address IN (usdc,usdt,dai))
+WHERE transfer_amount > 100000
+```
+
+This is already a pretting interesting list. At this point, we can start running queries on all transactions involving USDT, USDC, and DAI within the depegging event. After some initial work, I decided to get rid of all transfers not involving EOAs, to focus on EOA profit. There are plenty of MEV and Contracts swapping tokens and making money too, which could be a future project.
+
+To get only the EOAs that were involved in these transactions, we can join the transfers table on the transactions table, and join on the transactions hash and force the from address on the overall transaction to equal the from or to address in the transfers table.
+
+```sql
+DECLARE depegging_start TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 02:00:00');
+DECLARE depegging_end TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 20:00:00');
+DECLARE usdc STRING DEFAULT '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
+DECLARE usdt STRING DEFAULT '0xdac17f958d2ee523a2206206994597c13d831ec7';
+DECLARE dai STRING DEFAULT '0x6b175474e89094c44da98b954eedeac495271d0f';
+DECLARE usdc_decimals NUMERIC DEFAULT 6;
+DECLARE usdt_decimals NUMERIC DEFAULT 6;
+DECLARE dai_decimals NUMERIC DEFAULT 18;
+
+
+WITH transfers AS (SELECT * FROM (SELECT *,
+  CASE
+      WHEN token_address = usdc THEN CAST(value AS NUMERIC) / POWER(10, usdc_decimals)
+      WHEN token_address = usdt THEN CAST(value AS NUMERIC) / POWER(10, usdt_decimals)
+      WHEN token_address = dai THEN CAST(value AS NUMERIC) / POWER(10, dai_decimals)
+      ELSE CAST(value AS NUMERIC) -- Default case
+  END AS transfer_amount
+FROM `bigquery-public-data.crypto_ethereum.token_transfers` tt
+WHERE depegging_start < tt.block_timestamp AND tt.block_timestamp < depegging_end
+AND token_address IN (usdc,usdt,dai))
+WHERE transfer_amount > 100000
+ORDER BY transaction_hash),
+original_transactions AS (SELECT *
+FROM `bigquery-public-data.crypto_ethereum.transactions` txns
+WHERE depegging_start < txns.block_timestamp AND txns.block_timestamp < depegging_end
+)
+
+SELECT DISTINCT o.from_address
+FROM transfers t
+JOIN original_transactions o
+ON t.transaction_hash = o.hash
+```
+
+We saved this result as a new table, `usdc_depegging.eoas` and use it in future queries.
+
+With:
+
+```sql
+SELECT DISTINCT o.from_address
+FROM transfers t
+JOIN original_transactions o
+ON t.transaction_hash = o.hash
+```
+
+We’re getting only EOAs that initiatied transactions during the depegging and were involved in interesting stablecoin transactions.
+
+Now, we can search for all transactions and transfers where an EOA was both a sender and a receiver, indicating a swap. Then, we can sum up the stablecoins out - stablecoins in to figure out the profit and sort by it.
+
+Full Query:
+
+```sql
+DECLARE depegging_start TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 02:00:00');
+DECLARE depegging_end TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 20:00:00');
+DECLARE usdc STRING DEFAULT '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
+DECLARE usdt STRING DEFAULT '0xdac17f958d2ee523a2206206994597c13d831ec7';
+DECLARE dai STRING DEFAULT '0x6b175474e89094c44da98b954eedeac495271d0f';
+DECLARE usdc_decimals NUMERIC DEFAULT 6;
+DECLARE usdt_decimals NUMERIC DEFAULT 6;
+DECLARE dai_decimals NUMERIC DEFAULT 18;
+
+
+WITH transfers AS (SELECT * FROM (SELECT *,
+  CASE
+      WHEN token_address = usdc THEN CAST(value AS NUMERIC) / POWER(10, usdc_decimals)
+      WHEN token_address = usdt THEN CAST(value AS NUMERIC) / POWER(10, usdt_decimals)
+      WHEN token_address = dai THEN CAST(value AS NUMERIC) / POWER(10, dai_decimals)
+      ELSE CAST(value AS NUMERIC) -- Default case
+  END AS transfer_amount
+FROM `bigquery-public-data.crypto_ethereum.token_transfers` tt
+WHERE depegging_start < tt.block_timestamp AND tt.block_timestamp < depegging_end
+AND token_address IN (usdc,usdt,dai))
+WHERE transfer_amount > 100000
+ORDER BY transaction_hash),
+original_transactions AS (SELECT *
+FROM `bigquery-public-data.crypto_ethereum.transactions` txns
+WHERE depegging_start < txns.block_timestamp AND txns.block_timestamp < depegging_end
+)
+
+
+SELECT *,(scout.stablecoins_out - scin.stablecoins_in) as potential_profit FROM (SELECT t.transaction_hash,t.from_address,SUM(t.transfer_amount) as stablecoins_in
+FROM transfers t
+JOIN (
+  SELECT transaction_hash
+  FROM transfers
+  GROUP BY transaction_hash
+  HAVING COUNT(*) > 1
+) dupes
+ON t.transaction_hash = dupes.transaction_hash
+JOIN `usdc_depegging.eoas` e
+ON e.from_address = t.from_address
+GROUP BY t.from_address,t.transaction_hash
+ORDER BY stablecoins_in DESC) scin
+JOIN (SELECT t.transaction_hash,t.to_address,SUM(t.transfer_amount) as stablecoins_out
+FROM transfers t
+JOIN (
+  SELECT transaction_hash
+  FROM transfers
+  GROUP BY transaction_hash
+  HAVING COUNT(*) > 1
+) dupes
+ON t.transaction_hash = dupes.transaction_hash
+JOIN `usdc_depegging.eoas` e
+ON e.from_address = t.to_address
+GROUP BY t.to_address,t.transaction_hash
+ORDER BY stablecoins_out DESC) scout
+ON scin.from_address = scout.to_address AND scin.transaction_hash = scout.transaction_hash
+WHERE scout.stablecoins_out - scin.stablecoins_in > 100000
+ORDER BY (scout.stablecoins_out - scin.stablecoins_in) DESC
+```
+
+To get tranactions that involved more than one transfer:
+
+```sql
+JOIN (
+  SELECT transaction_hash
+  FROM transfers
+  GROUP BY transaction_hash
+  HAVING COUNT(*) > 1
+) dupes
+ON t.transaction_hash = dupes.transaction_hash
+```
+
+You could set this parameter to 2 if you want direct, one-to-one transfers where someone made money.
+
+To sum up the stablecoins out of the transaction, sent to the original EAO:
+
+```sql
+JOIN (SELECT t.transaction_hash,t.to_address,SUM(t.transfer_amount) as stablecoins_out
+FROM transfers t
+JOIN (
+  SELECT transaction_hash
+  FROM transfers
+  GROUP BY transaction_hash
+  HAVING COUNT(*) > 1
+) dupes
+ON t.transaction_hash = dupes.transaction_hash
+JOIN `usdc_depegging.eoas` e
+ON e.from_address = t.to_address
+GROUP BY t.to_address,t.transaction_hash
+ORDER BY stablecoins_out DESC) scout
+```
+
+This sums up all the stablecoins transfers sent to the EOA during the transaction, which helps for DEX routers and multiple liquidity pools.
+
+The results of the query gives you a list of transaction where people potentially profited over \$100,000 in a single transaction. I say potentially because there could be extraneous factors. Also, these were poeple buying the dip of \$USDC, so it could’ve been a risky trading move.
+
+Picking a transaction from random, [here](https://etherscan.io/tx/0x5eb83407d2ecd6eda137df9f430af476dc806487ecabc49adc28747925d4bbd4):
+
+<img
+  src="https://raw.githubusercontent.com/Drblessing/blog/master/data/blogImages/depeg6.png"
+  width="100%"
+/>
+
+Looks like they sold \$DAI for \$USDC using 1inch v4.
+
+Overall, just EOAs swapping in single transactions made a lot of money buying the dip. Let’s see if we can investigate Defi strategies, that hedged if \$USDC goes to 0.
+
+## Defi Strategies
+
+As more dApps and blockchains launch, tracking onchain defi activity is becoming harder and harder. It’s not impossible, it’ll just take more dedicated teams and larger queries covering more of the potential lending, borrowing, and swapping transactions. For this investiagtion, we’ll focus on people who borrowed \$USDT from AAVE v2 or v3 during the depegging.
+
+Two strategies I found on twitter:
+
+[[1]](https://twitter.com/libevm/status/1635504045883551750?s=20) Borrowing \$USDT from AAVE and swapping it for \$USDC, then repaying the \$USDT loan + intereset with \$USDC?
+
+[[2]](https://twitter.com/spotonchain/status/1634419625130852353?s=20) Explained in the intro. I haven’t looked into them too much, but I’ll take Spot On Chains word.
+
+Let’s try to get all wallets that borrowed \$USDT from AAVE and then repaid it.
+
+To do this, let’s get the addresses of aave:
+
+```sql
+DECLARE aave_usdt_v2 STRING DEFAULT '0x3ed3b47dd13ec9a98b44e6204a523e766b225811';
+DECLARE aave_usdt_v3 STRING DEFAULT '0x23878914efe38d27c4d67ab83ed1b93a74d4086a';
+```
+
+And let’s get all wallets that were sent \$100,000 or more \$USDT from AAVE during the depegging:
+
+```sql
+DECLARE depegging_start TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 02:00:00');
+DECLARE depegging_end TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 20:00:00');
+DECLARE usdc STRING DEFAULT '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
+DECLARE usdt STRING DEFAULT '0xdac17f958d2ee523a2206206994597c13d831ec7';
+DECLARE dai STRING DEFAULT '0x6b175474e89094c44da98b954eedeac495271d0f';
+DECLARE usdc_decimals NUMERIC DEFAULT 6;
+DECLARE usdt_decimals NUMERIC DEFAULT 6;
+DECLARE dai_decimals NUMERIC DEFAULT 18;
+DECLARE aave_usdt_v2 STRING DEFAULT '0x3ed3b47dd13ec9a98b44e6204a523e766b225811';
+DECLARE aave_usdt_v3 STRING DEFAULT '0x23878914efe38d27c4d67ab83ed1b93a74d4086a';
+
+WITH token_transfers AS (SELECT * FROM(SELECT *,
+  CASE
+      WHEN token_address = usdc THEN CAST(value AS NUMERIC) / POWER(10, usdc_decimals)
+      WHEN token_address = usdt THEN CAST(value AS NUMERIC) / POWER(10, usdt_decimals)
+      WHEN token_address = dai THEN CAST(value AS NUMERIC) / POWER(10, dai_decimals)
+      ELSE CAST(value AS NUMERIC) -- Default case
+  END AS transfer_amount
+FROM `bigquery-public-data.crypto_ethereum.token_transfers` tt
+WHERE depegging_start < tt.block_timestamp AND tt.block_timestamp < depegging_end
+AND tt.token_address in (usdc,usdt))
+WHERE transfer_amount > 100000
+)
+
+SELECT *
+FROM token_transfers
+WHERE from_address in (aave_usdt_v2,aave_usdt_v3)
+```
+
+It looks like 582 wallets (with duplicates) borrowed over \$100k of \$USDT during the depegging from AAVE. The results could be polluted from different defi protocols, but let’s continue.
+
+Note here: 0xE3e53f468D5658d217412203463246aF76D7dB37 had over 124 token transfers from aave over \$100k \$USDT 👀.
+
+The `to_address` from this first query is the list of wallets were interested in.
+
+Let’s join it with all `from_address` that have sent AAVE v2 more than \$100k \$USDT during the depegging:
+
+```sql
+-- tt is CTE used above
+SELECT tt.from_address, tt.transaction_hash
+FROM token_transfers tt
+WHERE to_address in (aave_usdt_v2,aave_usdt_v3)
+```
+
+Joining the two (full query):
+
+```sql
+DECLARE depegging_start TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 02:00:00');
+DECLARE depegging_end TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 20:00:00');
+DECLARE usdc STRING DEFAULT '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
+DECLARE usdt STRING DEFAULT '0xdac17f958d2ee523a2206206994597c13d831ec7';
+DECLARE dai STRING DEFAULT '0x6b175474e89094c44da98b954eedeac495271d0f';
+DECLARE usdc_decimals NUMERIC DEFAULT 6;
+DECLARE usdt_decimals NUMERIC DEFAULT 6;
+DECLARE dai_decimals NUMERIC DEFAULT 18;
+DECLARE aave_usdt_v2 STRING DEFAULT '0x3ed3b47dd13ec9a98b44e6204a523e766b225811';
+DECLARE aave_usdt_v3 STRING DEFAULT '0x23878914efe38d27c4d67ab83ed1b93a74d4086a';
+
+
+--Repayments
+WITH token_transfers AS (SELECT * FROM(SELECT *,
+  CASE
+      WHEN token_address = usdc THEN CAST(value AS NUMERIC) / POWER(10, usdc_decimals)
+      WHEN token_address = usdt THEN CAST(value AS NUMERIC) / POWER(10, usdt_decimals)
+      WHEN token_address = dai THEN CAST(value AS NUMERIC) / POWER(10, dai_decimals)
+      ELSE CAST(value AS NUMERIC) -- Default case
+  END AS transfer_amount
+FROM `bigquery-public-data.crypto_ethereum.token_transfers` tt
+WHERE depegging_start < tt.block_timestamp AND tt.block_timestamp < depegging_end
+AND tt.token_address in (usdc,usdt))
+WHERE transfer_amount > 100000
+)
+
+SELECT tt.to_address
+-- tt.transaction_hash as borrow,r.transaction_hash as repay
+FROM token_transfers tt
+JOIN (SELECT tt.from_address, tt.transaction_hash
+FROM token_transfers tt
+WHERE to_address in (aave_usdt_v2,aave_usdt_v3)) r
+ON r.from_address = tt.to_address
+WHERE tt.from_address in (aave_usdt_v2,aave_usdt_v3)
+GROUP BY tt.to_address
+```
+
+Many of them have multiple borrows and repays, so we grab the first borrow and last repay in this timespan:
+
+```sql
+DECLARE depegging_start TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 02:00:00');
+DECLARE depegging_end TIMESTAMP DEFAULT TIMESTAMP('2023-03-11 20:00:00');
+DECLARE usdc STRING DEFAULT '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
+DECLARE usdt STRING DEFAULT '0xdac17f958d2ee523a2206206994597c13d831ec7';
+DECLARE dai STRING DEFAULT '0x6b175474e89094c44da98b954eedeac495271d0f';
+DECLARE usdc_decimals NUMERIC DEFAULT 6;
+DECLARE usdt_decimals NUMERIC DEFAULT 6;
+DECLARE dai_decimals NUMERIC DEFAULT 18;
+DECLARE aave_usdt_v2 STRING DEFAULT '0x3ed3b47dd13ec9a98b44e6204a523e766b225811';
+DECLARE aave_usdt_v3 STRING DEFAULT '0x23878914efe38d27c4d67ab83ed1b93a74d4086a';
+
+WITH token_transfers AS (SELECT * FROM(SELECT *,
+  CASE
+      WHEN token_address = usdc THEN CAST(value AS NUMERIC) / POWER(10, usdc_decimals)
+      WHEN token_address = usdt THEN CAST(value AS NUMERIC) / POWER(10, usdt_decimals)
+      WHEN token_address = dai THEN CAST(value AS NUMERIC) / POWER(10, dai_decimals)
+      ELSE CAST(value AS NUMERIC) -- Default case
+  END AS transfer_amount
+FROM `bigquery-public-data.crypto_ethereum.token_transfers` tt
+WHERE depegging_start < tt.block_timestamp AND tt.block_timestamp < depegging_end
+AND tt.token_address in (usdc,usdt))
+WHERE transfer_amount > 100000
+), min_block_cte AS (
+  SELECT
+    tt.to_address as wallet,
+    MIN(tt.block_number) as min_block_number
+  FROM token_transfers tt
+  WHERE tt.from_address in (aave_usdt_v2, aave_usdt_v3)
+  GROUP BY tt.to_address
+), max_block_cte AS (
+  SELECT
+    tt.from_address as wallet,
+    MAX(tt.block_number) as max_block_number
+  FROM token_transfers tt
+  WHERE tt.to_address in (aave_usdt_v2, aave_usdt_v3)
+  GROUP BY tt.from_address
+)
+
+SELECT
+  cte.wallet,
+  tt.transaction_hash as borrow,
+  r.transaction_hash as repay
+FROM min_block_cte cte
+JOIN token_transfers tt
+ON cte.wallet = tt.to_address
+AND cte.min_block_number = tt.block_number
+JOIN (SELECT
+  cte.wallet,
+  tt.transaction_hash
+FROM max_block_cte cte
+JOIN token_transfers tt
+ON cte.wallet = tt.from_address
+AND cte.max_block_number = tt.block_number
+WHERE tt.to_address in (aave_usdt_v2, aave_usdt_v3)) r
+ON r.wallet = cte.wallet
+WHERE tt.from_address in (aave_usdt_v2, aave_usdt_v3);
+```
+
+[Output here](https://drive.google.com/file/d/1ND1ycnKQHta9bV-2uJBoL7MSgwaIkK85/view)
+
+We end up with a list of 76 addresses that sent and receieved over $100k of USDT during the depegging from AAVE. The acutal strategies they implemented between these is unique and not easily derived from simple queries. Some or all of them coudl’ve been borrowing USDT for a potential safe-haven as the depegging occured. Further work would be exploring this.
+
+Finally, lets look into one of these addresses:
+
+0x051d091b254ecdbbb4eb8e6311b7939829380b27
+
+They borrowed \$5m USDT from AAVE, then sold it for DAI as well as interacting with Compound and using wBTC as collateral, then repaid the \$5m USDT loan.
+
+[Borrow](https://etherscan.io/tx/0xced7a7feb09dd83eff7ee7ab19a967c2df3470088fa604ec7d9b0f808909a51d)
+
+[Repay](https://etherscan.io/tx/0x2190b33062662df0ccbcb6bab88c2d80e09d1dcb74d7077bfd1e462218e7c6a7)
+
+[Debank](https://debank.com/profile/0x051d091b254ecdbbb4eb8e6311b7939829380b27/history)
+
+## Conclusion
+
+My on-chain analysis of the $USDC depegging event has revealed interesting patterns and strategies employed by the addresses that profited from the event. Through the use of Google BigQuery, I was able to identify top profiting addresses and analyze their transactions, gaining valuable insights into their modus operandi. While my findings offer a glimpse into the complex world of cryptocurrency trading and market dynamics, they also highlight the need for further research and analysis to better understand the impact of such events on the market. As the cryptocurrency ecosystem continues to evolve, it becomes increasingly important for investors, regulators, and other stakeholders to stay informed and vigilant in order to make well-informed decisions and ensure the stability and integrity of the market. I look forward to more onchain analysis in the future.
