@@ -1,0 +1,124 @@
+---
+title: '⏰ A Decade of Ethereum: Reflecting on the Groundbreaking Whitepaper'
+date: '2023-04-14'
+tags: ['Crypto', 'Ethereum']
+draft: false
+summary: 'A decade after the whitepaper’s publication, it’s an opportune moment to reflect on its achievements, as well as give a simple explanation.'
+images: ['https://miro.medium.com/v2/resize:fit:1400/format:webp/1*Z1NAkWNwEdHvIe0UG7zl5Q.jpeg']
+authors: ['default']
+layout: PostSimple
+canonicalUrl: https://dblessing.dev/blog/decade-ethereum-whitepaper
+---
+
+<img
+  src="https://miro.medium.com/v2/resize:fit:1400/format:webp/1*Z1NAkWNwEdHvIe0UG7zl5Q.jpeg"
+  alt="Ethereum Whitepaper"
+/>
+
+As I revisit the original Ethereum [whitepaper](https://ethereum.org/en/whitepaper/), which outlined its technical framework, I'm amazed at how it all unfolded precisely as Vitalik Buterin envisioned. In hindsight, it might seem obvious, but at the time, it appeared to be a far-fetched idea. At least as far-fetched as man flying through the air. A computer running on a blockchain? The concept raised numerous questions: How would it work? Where would the code execute? How would all the computers stay synchronized? And so forth. While many intelligent individuals initially doubted the idea, others recognized its potential and began building upon it.
+
+Now, a decade after the whitepaper's publication, it's an opportune moment to reflect on its achievements, as well as provide a simple explanation for those interested in exploring Ethereum, blockchain technology, and the emerging world of web3.
+
+<br />
+
+# 🤨 Why does Ethereum matter?
+
+Ethereum, the digital city on a hill, has emerged as a beacon of freedom and democracy in the realm of technology. As a decentralized platform, it empowers individuals by providing an open, transparent, and censorship-resistant infrastructure that facilitates trustless interactions among its users. Ethereum's smart contracts and decentralized applications (dApps) enable a wide array of innovative solutions that promote financial inclusion, equitable resource distribution, and democratic decision-making. By championing the principles of decentralization and self-governance, Ethereum not only fosters a sense of community but also paves the way for a more just and democratic future in the digital world.
+
+Ethereum has grown to a $250,000,000 market [cap](https://www.coingecko.com/en/coins/ethereum), launched hundreds of revolutionary decentralized [dApps](https://defillama.com/), and laid the foundation for a future of economic [freedom](https://ethereum.org/en/defi/).
+
+While the original whitepaper is outdated now, I still believe it is the most approachable overview to the revolutionary technology. The most notable difference now is that Ethereum switched from Proof-of-Work (PoW) to Proof-of-Stake (PoS). For learning more, I recommend this [guide](https://ethereum.org/en/learn/).
+
+<br />
+
+# 👁️ The Vision of Ethereum
+
+"The intent of Ethereum is to create an alternative protocol for building decentralized applications, providing a different set of tradeoffs that we believe will be very useful for a large class of decentralized applications, with particular emphasis on situations where rapid development time, security for small and rarely used applications, and the ability of different applications to very efficiently interact, are important.
+
+**Ethereum does this by building what is essentially the ultimate abstract foundational layer:**
+
+a blockchain with a built-in Turing-complete programming language, allowing anyone to write smart contracts and decentralized applications where they can create their own arbitrary rules for ownership, transaction formats and state transition functions."
+
+First, what is a decentralized application, or dApp?
+
+dApps, short for decentralized applications, are like regular apps such as Google, Instagram, or Venmo, but with a key difference: they run on a global network called the Ethereum blockchain instead of being hosted in data centers. This makes dApps easily accessible, transparent, and resilient to censorship, providing a secure and reliable experience for users around the world.
+
+Essentially, dApps are the future of all apps, with particular application now to financial systems.
+
+Before Ethereum was released, building dApps was almost impossible, requiring you to build on Bitcoin or launch your own blockchain, akin to launching your own operating system today. Ethereum allows you to build any dApp, by executing code run in smart contracts with a computer on the blockchain itself, called the Ethereum Virtual Machine (EVM).
+
+The EVM is like your laptop computer, only it runs on Ethereum nodes around the world. It costs a small amount of money to download a file, upload a file, or run an app. However, your account on this computer is totally owned and controlled by you, and you can never be censored, freezed, or blocked.
+
+As Vitalik pointed out, creating a dApp for the EVM enables:
+
+- Raid development time
+- Security
+- Applications to interact
+
+It turns out, these advantages have proven to be true, and they contribute to Ethereum's immense value. Using a programming language called Solidity, anyone can upload their app to Ethereum and have it up and running. Anyone, anywhere, at any time, for any reason, can do anything on Ethereum. Nobody can stop it. Solidity is a fast-evolving language that facilitates the creation of various applications, such as marketplaces and banks. Currently, projects are underway to introduce social media networks to Ethereum. These networks will be uncensorable, promote free speech, and foster democracy.
+
+<br />
+
+# 🥫 Ethereum’s Secret Sauce
+
+The groundbreaking innovations of the Ethereum blockchain emerged from the idea that a blockchain's scripting language can do more than just record accounts and balances. Vitalik Buterin envisioned a Turing-complete scripting language capable of running any app ever created.
+
+Ethereum maintains a state, similar to a computer's hard drive. Its state comprises objects called "accounts," which can be thought of as folders on a hard drive. Each account has a 20-byte address and can send and receive data and Ethereum.
+
+Each account has four fields, or each folder on Ethereum contains four files:
+
+- **Nonce:** A simple counter to prevent transactions from being maliciously reprocessed. When you give a check to someone, do you want them cashing it twice?
+- **Balance:** How much Ethereum the account holds.
+- **Contract Code:** The source code of the dApp.
+- **Storage:** The additional files, data, and information the dApp can access.
+
+Since all of these dApps share the same computer and filesystem, they can easily interact, enabling network effects of dApps to flourish and provide mutual value. Users can not only trade assets but also loan and borrow them.
+
+So, if the EVM has accounts or the computer has a hard drive, how does it execute code?
+
+The Ethereum blockchain contains transactions, which are signatures from accounts that express their intent to perform specific actions. If you, as a user of the Ethereum blockchain, want to open and run one of the dApps, you'll need to sign a transaction and pay a transaction fee.
+
+Each transaction includes:
+
+- **From** The sender of the transaction.
+- **To:** The reciepient of the transaction.
+- **Signature:** The cryptographic signature of the sender, authorizing the transaction.
+- **Value:** The amount of Ethereum being trasnferred to the reciepient.
+- **Data:** The information being passed to the dApp, such as your login information when you login to Instagram.
+- **Gas:** The transaction cost. There's more than just one Gas value, but this explanation is simplified.
+
+Transactions are sent to the EVM, which processes them against the state (accounts) to fulfill their intended purpose.
+
+That’s it! In a nutshell, the EVM, accounts, and transactions come together to form a global computer. This revolutionary concept underpins Ethereum, demonstrating that the EVM can be a Turing-complete blockchain, enabling people and dApps to operate without limitations in their capabilities.
+
+<br />
+
+# 🙀 Ethereum Whitepaper Bloopers
+
+While revolutionary and prescient, there are some ideas that are still being worked out.
+
+1. Ethereum File Stroage
+
+The whitepaper describes a scheme for uploading 20-200 GB to the Ethereum blockchain. Directly uploading data to the account storage is out of the question because it's too expensive. Ethereum block space is expensive due to its high value. There would be a method to create a smart contract that randomly requests the data from time to time, thereby incentivizing an oracle network of nodes to store these files. This is a significant development area, with many projects working on it. We definitely need reliable and affordable ways to store large files on Ethereum.
+
+1. “In general, there are three types of applications on top of Ethereum.”
+
+“The first category is financial applications, providing users with more powerful ways of managing and entering into contracts using their money. This includes sub-currencies, financial derivatives, hedging contracts, savings wallets, wills, and ultimately even some classes of full-scale employment contracts. The second category is semi-financial applications, where money is involved but there is also a heavy non-monetary side to what is being done; a perfect example is self-enforcing bounties for solutions to computational problems. Finally, there are applications such as online voting and decentralized governance that are not financial at all.”
+
+The first category, financial applications, have been Ethereum’s first main source of use. The first dApp crazy was Initial Coin Offerings (ICOs), the blockchain equivalent of IPOs.
+
+In my mind, I hear “There are three flavors of ice cream, chocolate, semi-chocolate, and non-chocolate.” Ethereum can do it all.
+
+1. Smart Contracts paying transaction fees for you
+
+“Ethereum-based token systems acting as sub-currencies can potentially include another important feature that on-chain Bitcoin-based meta-currencies lack: the ability to pay transaction fees directly in that currency. The way this would be implemented is that the contract would maintain an ether balance with which it would refund ether used to pay fees to the sender, and it would refill this balance by collecting the internal currency units that it takes in fees and reselling them in a constant running auction. Users would thus need to "activate" their accounts with ether, but once the ether is there it would be reusable because the contract would refund it each time.”
+
+Anyone who's used Ethereum knows that transaction fees are expensive. Simple transactions sometimes cost over $100. This is rapidly being solved with L2s and other Ethereum upgrades. It's interesting to see this idea of having contracts pay the transaction fee to the user because nobody has significantly implemented it. There are some newer players doing this; for example, some new decentralized social networks are paying fees for users. Also new technologies like account abstraction are working on this.
+
+<br />
+
+# 🏁 Conclusion
+
+Ethereum changed the world. It is going to do for finance what the printing press did for information. It is the “**ultimate abstract foundational layer,”** a Turing-complete computer that runs any application on top of it. Its the first and last word on smart contracts and dApps. Any future blockchain that wants to compete with it needs to do so on the dimensions of scalability and privacy, not on smart contract code execution. No new blockchain can be more expressive than Ethereum in terms of code execution. Trying to build an Ethereum-killer Blockchain now is as futile as trying to develop a new operating system. We use MacOS, Linux, or Windows.
+
+Ethereum all started with a fifty page whitepaper back in 2014, and its civilizational consequences are yet to be felt. I wonder how historians will look back on it in 2114.
