@@ -38,7 +38,7 @@ export default function Home({ posts }) {
           />
           <h1 className="text-2xl text-gray-400">Latest Adventure</h1>
           <img
-            src="https://raw.githubusercontent.com/Drblessing/utils/master/Images/tahoe_3_1_2023.jpeg"
+            src="https://raw.githubusercontent.com/Drblessing/static/main/Images/tahoe_3_1_2023.jpeg"
             alt="Tahoe"
             className="rounded-lg shadow-lg"
           />
