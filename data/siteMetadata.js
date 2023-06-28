@@ -6,7 +6,7 @@ const siteMetadata = {
     'The personal website of Daniel Blessing. Blockchain Mindset - A blog about blockchains, freedom, and more stuff.',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://www.dblessing.dev',
+  siteUrl: 'https://www.dbless.dev',
   siteRepo: 'https://github.com/drblessing/blog',
   siteLogo: '/static/favicons/favicon.png',
   image: '/static/images/avatar.jpeg',
